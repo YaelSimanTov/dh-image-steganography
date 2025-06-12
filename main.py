@@ -1,6 +1,6 @@
 import os
 from DH_Key_Exchange_10 import generate_dh_values
-from Embed_DH_Values_Into_Image_11 import dh_key_generation_and_embedding
+from Embed_DH_Values_Into_Image_11 import dh_key_generation_and_embedding, extract_B_from_image, embed_B_into_image
 from Extract_DH_From_Image_2 import extract_dh_from_image
 from Encrypt_And_Hide_Message_3 import encrypt_and_embed_message
 from Extract_And_Decrypt_Message_4 import extract_and_decrypt_message
@@ -59,7 +59,9 @@ if __name__ == "__main__":
             print("\nBob's private key (b):", b)
             B = pow(g, b, p)
             print("Bob's public key (B):", B)
-            print(f"\n📤 Your public key (B) to send back to the sender is:\nB = {B}")
+            image = input("Enter path to image to embed B: ")
+            output = input("Enter output image filename (e.g. B_embedded.png): ")
+            embed_B_into_image(str(B), image, output)
 
             # Calculate shared secret
             S = pow(A, b, p)
@@ -71,9 +73,9 @@ if __name__ == "__main__":
             print("📁 Bob's shared secret saved to shared_secret.txt for later comparison.")
 
         elif choice == '3':
-            message = input("Enter the message to encrypt and embed: ")
-            # S = int(input("Enter shared secret (S): "))
-            B = int(input("Enter B value received from receiver: "))
+            image_with_B = input("Enter image file that contains B: ")
+            B = int(extract_B_from_image(image_with_B))
+            print(f"✅ Extracted B from image: {B}")
             S = pow(B, a, p)
             print(f"🔐 Alice Calculated shared secret (S) = {S}")
 
@@ -91,7 +93,7 @@ if __name__ == "__main__":
             finally:
                 if os.path.exists("shared_secret.txt"):
                     os.remove("shared_secret.txt")
-
+            message = input("Enter the message to encrypt and embed: ")
             image = input("Enter path to image to embed message: ")
             output = input("Enter output image filename (e.g. encrypted_msg.png): ")
             method = choose_lsb_method()
