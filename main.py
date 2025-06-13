@@ -19,6 +19,13 @@ def load_method_for_image(image_filename):
     except FileNotFoundError:
         return None
 
+def check_image_file_exists	(image_filename):
+    if not os.path.exists(image_filename):
+        print("❌ Image file not found.")
+        return False
+    else:
+        return True
+
 def main_menu():
     print("\n🔐 DH Key Exchange + Steganography - Main Menu")
     print("1. Generate and Embed DH values into image (Sender - Step 1)")
@@ -43,6 +50,8 @@ if __name__ == "__main__":
             p, g, A, a = generate_dh_values()
             print(f"\n✅ Generated DH values:\np = {p}\ng = {g}\nA = {A}")
             image = input("Enter path to image to embed DH values: ")
+            if not check_image_file_exists(image): continue
+
             output = input("Enter output image filename (e.g. dh_embedded.png): ")
             # embed_dh_values_lsb(p, g, A, image, output)
             method = choose_lsb_method()
@@ -51,6 +60,8 @@ if __name__ == "__main__":
 
         elif choice == '2':
             image = input("Enter path to image with embedded DH values: ")
+            if not check_image_file_exists(image): continue
+
             method = load_method_for_image(image)
             p, g, A = extract_dh_from_image(image, method)
             print(f"\n✅ Extracted DH values:\np = {p}\ng = {g}\nA = {A}")
@@ -60,6 +71,8 @@ if __name__ == "__main__":
             B = pow(g, b, p)
             print("Bob's public key (B):", B)
             image = input("Enter path to image to embed B: ")
+            if not check_image_file_exists(image): continue
+
             output = input("Enter output image filename (e.g. B_embedded.png): ")
             embed_B_into_image(str(B), image, output)
 
@@ -74,6 +87,8 @@ if __name__ == "__main__":
 
         elif choice == '3':
             image_with_B = input("Enter image file that contains B: ")
+            if not check_image_file_exists(image_with_B): continue
+
             B = int(extract_B_from_image(image_with_B))
             print(f"✅ Extracted B from image: {B}")
             S = pow(B, a, p)
@@ -90,22 +105,33 @@ if __name__ == "__main__":
                     continue
             except FileNotFoundError:
                 print("⚠️ Bob's shared secret file not found. Skipping comparison.")
-            finally:
-                if os.path.exists("shared_secret.txt"):
-                    os.remove("shared_secret.txt")
+
             message = input("Enter the message to encrypt and embed: ")
             image = input("Enter path to image to embed message: ")
+            if not check_image_file_exists(image): continue
+
             output = input("Enter output image filename (e.g. encrypted_msg.png): ")
+
             method = choose_lsb_method()
             save_method_for_image(output, method)
             encrypt_and_embed_message(message, S, image, output, method)
 
         elif choice == '4':
-            image = input("Enter image file with embedded encrypted message: ")
-            S = int(input("Enter shared secret (S): "))
-            method = load_method_for_image(image)
-            # extract_and_decrypt_message(image, S)
-            extract_and_decrypt_message(image, S, method) # @NEED TO DO !!
+            try:
+                with open("shared_secret.txt", "r") as f:
+                    S = int(f.read().strip())
+
+                image = input("Enter image file with embedded encrypted message: ")
+                if not check_image_file_exists(image) : continue
+
+                # S = int(input("Enter shared secret (S): "))
+                method = load_method_for_image(image)
+                extract_and_decrypt_message(image, S, method) # @NEED TO DO !!
+            except FileNotFoundError:
+                print("⚠️ Bob's shared secret file not found. Skipping comparison.")
+            finally:
+                if os.path.exists("shared_secret.txt"):
+                    os.remove("shared_secret.txt")
 
         elif choice == '0':
             print("👋 Exiting.")
@@ -113,3 +139,6 @@ if __name__ == "__main__":
 
         else:
             print("❌ Invalid option. Please try again.")
+
+
+
