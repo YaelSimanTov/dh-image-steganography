@@ -10,6 +10,30 @@ def local_variance(block):
     return np.var(block)
 
 def embed_message_variance(message, input_image, output_image):
+    """
+        Embeds a plaintext message into an image using adaptive LSB steganography based on local variance.
+
+        The image is divided into 3x3 blocks, and for each block, the local variance is calculated
+        to determine which pair of LSB positions to use for hiding 2 bits. This ensures bits are hidden
+        more effectively in visually noisy regions.
+
+        The message is prepended with a header containing the min and max variance values, and
+        appended with a global END_MARKER to signal message termination during extraction.
+
+        Parameters:
+            message (str): The message to be embedded into the image.
+            input_image (str): Path to the input image (should be in RGB format).
+            output_image (str): Path where the output image with the hidden message will be saved.
+
+        Returns:
+            None. The modified image is saved to the specified output path.
+
+        Notes:
+            - Uses a 2-bit embedding scheme with 6 LSB position pairs.
+            - The global variable END_MARKER must be defined (e.g. END_MARKER = "$t3g0$").
+            - The message is embedded into the red channel only.
+            - No encryption is used in this version.
+        """
     img = Image.open(input_image).convert("RGB")
     array = np.array(img)
     gray = img.convert("L")
@@ -56,6 +80,26 @@ def embed_message_variance(message, input_image, output_image):
 
 
 def extract_message_variance(input_image):
+    """
+       Extracts a plaintext message from an image using variance-based LSB steganography.
+
+       The function first extracts a short header (assumed to be 20 characters) from the image
+       using a fixed LSB pair. This header encodes the min and max variance values used during
+       embedding. Based on the variance map, it dynamically selects LSB bit pairs for extracting
+       the message bits from the red channel of each 3x3 block.
+
+       Parameters:
+           input_image (str): Path to the image containing the embedded message.
+
+       Returns:
+           str: The extracted message without the variance header and END_MARKER.
+                If the header cannot be decoded, an empty string is returned.
+
+       Notes:
+           - The function assumes the message ends with a global END_MARKER (e.g., "$t3g0$").
+           - The variance is computed using a 3x3 neighborhood on the grayscale version of the image.
+           - The function uses 6 pre-defined LSB bit-pairs based on variance binning.
+       """
     img = Image.open(input_image).convert("RGB")
     array = np.array(img)
     gray = img.convert("L")
@@ -63,13 +107,13 @@ def extract_message_variance(input_image):
     var_map = generic_filter(gray_arr, local_variance, size=3, mode='reflect')
     lsb_pairs = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
 
-    # שלב 1: חילוץ header ראשוני (20 תווים מספיקים)
+    # Step 1: Extract initial header (20 characters should be enough)
     header_bits = []
-    max_header_bits = 20 * 8  # נגיד 20 תווים לכותרת
+    max_header_bits = 20 * 8   # assume 20 characters for the header
     for y in range(1, gray_arr.shape[0] - 1, 3):
         for x in range(1, gray_arr.shape[1] - 1, 3):
             r = array[y, x, 0]
-            pos1, pos2 = lsb_pairs[0]  # שימוש זמני בקבוצה הראשונה
+            pos1, pos2 = lsb_pairs[0] # Using the first pair for header extraction
             header_bits.append(str((r >> pos1) & 1))
             header_bits.append(str((r >> pos2) & 1))
             if len(header_bits) >= max_header_bits:
@@ -90,12 +134,12 @@ def extract_message_variance(input_image):
     try:
         min_var, max_var = map(float, header.split(',')[:2])
     except ValueError:
-        print("שגיאה: לא ניתן לפענח את הכותרת:", repr(header))
+        print("Error: Failed to decode the header:", repr(header))
         return ""
 
     step = (max_var - min_var) / 6 if max_var > min_var else 1
 
-    # שלב 2: חילוץ ההודעה לפי שונות
+   # Step 2: Extracting the message based on variance
     bits = []
     for y in range(1, gray_arr.shape[0] - 1, 3):
         for x in range(1, gray_arr.shape[1] - 1, 3):
@@ -107,7 +151,7 @@ def extract_message_variance(input_image):
             bits.append(str((r >> pos1) & 1))
             bits.append(str((r >> pos2) & 1))
 
-    # פענוח ביטים להודעה
+    #Decoding bits into a message
     message = ''
     for i in range(0, len(bits), 8):
         byte = ''.join(bits[i:i + 8])
@@ -119,12 +163,12 @@ def extract_message_variance(input_image):
             message = message.split(END_MARKER)[0]
             break
     pattern = r'^\d+\.\d{6},\d+\.\d{6}'
-    message_r = re.sub(pattern, '', message).lstrip()     # הסרה של תחילית ההודעה  מההתחלה
+    message_r = re.sub(pattern, '', message).lstrip()     #Removing the prefix from the beginning of the message
     print(" the message is: ", message_r)
     return message_r
 
 
 
-# שימוש לדוגמה
+# Example usage:
 # embed_message_variance("Hello world! it is a beautiful day , this year 2025", "clean.png", "op88uuo.png")
 # extract_message_variance("op88uuo.png")

@@ -7,7 +7,7 @@ from Crypto.Hash import SHA256
 from Crypto.Util.Padding import pad, unpad
 
 END_MARKER = "$t3g0$"
-# S = "123456"  # הסיסמה לשיתוף
+# S = "123456" # The password for sharing
 
 
 def get_aes_key(password):
@@ -33,6 +33,28 @@ def local_variance(block):
 
 
 def embed_message_variance(message, input_image, output_image ,sign):
+    """
+        Embeds an encrypted message into an image using adaptive LSB steganography
+        based on local variance mapping.
+
+        The image is divided into 3x3 blocks, and for each block, the local variance
+        is calculated to determine which LSB pair to use for embedding. This allows
+        data to be hidden in noisier (higher-variance) areas, making it less detectable.
+
+        Parameters:
+            message (str): The plaintext message to encrypt and embed.
+            input_image (str): Path to the original input image (must be RGB).
+            output_image (str): Path to save the output image with the embedded message.
+            sign (int): A shared secret used for encrypting the message via AES.
+
+        Returns:
+            None. Saves the image with the embedded message to the specified output path.
+
+        Notes:
+            - The message is encrypted using AES and marked with a global END_MARKER.
+            - A header is embedded containing min/max variance and encrypted length.
+            - Uses a 2-bit LSB embedding scheme with 6 variance-based bins.
+        """
     img = Image.open(input_image).convert("RGB")
     array = np.array(img)
     gray = img.convert("L")
@@ -74,10 +96,30 @@ def embed_message_variance(message, input_image, output_image ,sign):
 
     out = Image.fromarray(array)
     out.save(output_image)
-    print(f"✅ Encrypted message embedded into {output_image}")
+    print(f" Encrypted message embedded into {output_image}")
 
 
 def extract_message_variance(input_image, sign):
+    """
+       Extracts and decrypts a hidden message from an image using variance-based LSB steganography.
+
+       This function first extracts an embedded header that contains the variance range
+       and the encrypted message length. Then it adaptively extracts bits from the image
+       based on local variance and finally decrypts the message using the shared secret.
+
+       Parameters:
+           input_image (str): Path to the image containing the hidden encrypted message.
+           sign (int): Shared secret used for AES decryption of the message.
+
+       Returns:
+           str: The decrypted plaintext message, or an empty string if extraction or decryption fails.
+
+       Notes:
+           - The message must be embedded using the `embed_message_variance` function.
+           - The function expects a header format of: "<min_var>,<max_var>|<len>|"
+           - LSB pairs are selected dynamically using 6 variance bins.
+           - The message is expected to end with the global END_MARKER (e.g. "$t3g0$").
+       """
     img = Image.open(input_image).convert("RGB")
     array = np.array(img)
     gray = img.convert("L")
@@ -86,7 +128,7 @@ def extract_message_variance(input_image, sign):
     lsb_pairs = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
 
     header_bits = []
-    max_header_bits = 300 * 8  # יותר מקום כדי לתפוס header ארוך
+    max_header_bits = 300 * 8  # More space to accommodate a long header
     for y in range(1, gray_arr.shape[0] - 1, 3):
         for x in range(1, gray_arr.shape[1] - 1, 3):
             r = array[y, x, 0]
@@ -111,7 +153,7 @@ def extract_message_variance(input_image, sign):
     pattern = r'^(\d+\.\d{6}),(\d+\.\d{6})\|([0-9A-Fa-f]{4})\|'
     match = re.match(pattern, header)
     if not match:
-        print("שגיאה: HEADER לא תקין.")
+        print("Error: Invalid HEADER.")
         return ""
 
     min_var = float(match.group(1))
@@ -120,7 +162,7 @@ def extract_message_variance(input_image, sign):
     step = (max_var - min_var) / 6 if max_var > min_var else 1
 
     enc_start = match.end()
-    needed_bits = enc_start * 8 + enc_len * 8  # כי hex = 4 ביטים
+    needed_bits = enc_start * 8 + enc_len * 8  # Because hex = 4 bits
 
     bits = []
     for y in range(1, gray_arr.shape[0] - 1, 3):
@@ -150,7 +192,7 @@ def extract_message_variance(input_image, sign):
     try:
         decrypted = decrypt_message(encrypted_part, sign)
     except Exception as e:
-        print("שגיאה בפענוח AES:", e)
+        print("AES decryption error:", e)
         return ""
 
     final_msg = decrypted.split(END_MARKER)[0]
@@ -158,6 +200,6 @@ def extract_message_variance(input_image, sign):
     return final_msg
 
 
-# # דוגמה לשימוש:
+# # Example usage:
 # embed_message_variance("Hello world! it is a beautiful day, this year 2025", "dog.png", "output_w_secr.png")
 # extract_message_variance("output_w_secr.png")
