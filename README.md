@@ -13,13 +13,13 @@ embedding)**
 ## How It Works
 ### Step 1: Generating and Embedding DH Parameters (Sender – Alice)
 1. **Alice** generates Diffie-Hellman parameters:
-○ Prime modulus p
-○ Generator g
-○ Private key a (random number)
-○ Public key A = g^a mod p
+- Prime modulus p
+- Generator g
+- Private key a (random number)
+- Public key A = g^a mod p
 2. Alice chooses a steganographic embedding method:
-○ Standard LSB
-○ Local Variance-Based LSB
+- Standard LSB
+- Local Variance-Based LSB
 3. The values p, g, and A are embedded into an image using the selected LSB method.
 4. The method used is saved alongside the image (.method.txt).
 5. The image is sent to **Bob**.
@@ -64,22 +64,23 @@ or provide descriptive filenames for each output.
 ### Important:
 You **must follow the steps in order:
 Step 1 → Step 2 → Step 3 → Step 4**
+
 Each step depends on the output from the previous one:
 - Skipping or reordering steps will result in incorrect behavior or decryption failures.
 - Shared secrets and public keys are passed between steps via steganographic
 images and intermediate files.
 ## File Structure
-├── main.py # Main interactive menu
-├── dh_key_exchange_10.py # Diffie-Hellman parameter generation
-├── embed_dh_values_into_image_11.py # Embedding p, g, A into image
+├── main.py # Main interactive menu<br>
+├── dh_key_exchange_10.py # Diffie-Hellman parameter generation<br>
+├── embed_dh_values_into_image_11.py # Embedding p, g, A into image<br>
 ├── embed_and_extract_B_into_image_12.py # Embedding B into image (to be
 implemented) and Extracting B from image (to be implemented)
-├── extract_dh_from_image_2.py # Extracting p, g, A from image
-├── encrypt_and_hide_message_3.py # Encrypt and embed message
-├── extract_and_decrypt_message_4.py # Extract and decrypt message
-├──lsb_with_variance_plaintext.py # Embed plaintext using variance-LSB
-├──lsb_with_variance_AES.py # Embed AES ciphertext using variance-LSB
-├── README.md # This documentation
+├── extract_dh_from_image_2.py # Extracting p, g, A from image<br>
+├── encrypt_and_hide_message_3.py # Encrypt and embed message<br>
+├── extract_and_decrypt_message_4.py # Extract and decrypt message<br>
+├──lsb_with_variance_plaintext.py # Embed plaintext using variance-LSB<br>
+├──lsb_with_variance_AES.py # Embed AES ciphertext using variance-LSB<br>
+├── README.md # This documentation<br>
 ## Dependencies
 This project requires the following libraries and tools:
 - **Python 3.x** – The runtime environment for executing the code.
