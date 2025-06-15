@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 from scipy.ndimage import generic_filter
 from lsb_with_variance_plaintext import embed_message_variance
-END_MARKER = "$t3g0$" # סימון לסיום ההודעה
+END_MARKER = "$t3g0$" #Marker indicating end of message
 
 
 def create_dh_message(p, g, A):
@@ -18,6 +18,24 @@ def message_to_bits(message):
 
 
 def embed_with_standard_lsb_without_AES(image_path, message, output_path):
+    """
+     Embeds a plaintext message into an image using standard LSB (Least Significant Bit) steganography,
+     without any encryption (no AES involved).
+
+     Each bit of the message is embedded into the least significant bit of each pixel component
+     (R, G, B) in a flattened version of the image data.
+
+     Parameters:
+         image_path (str): Path to the input image file (should be in RGB format).
+         message (str): The plaintext message to embed into the image.
+         output_path (str): Path where the output image with the hidden message will be saved.
+
+     Raises:
+         ValueError: If the message is too long to fit in the image.
+
+     Returns:
+         None. The modified image is saved to the specified output path.
+     """
     img = Image.open(image_path)
     img = img.convert("RGB")
     data = np.array(img)
@@ -41,14 +59,13 @@ def dh_key_generation_and_embedding(p, g, A, input_image, output_image, method):
     message = create_dh_message(p, g, A)
     if method == '1':
         embed_with_standard_lsb_without_AES(input_image, message, output_image)
-        print(f"✅ DH values (p, g, A) have been embedded into the image '{output_image}' successfully.")
+        print(f" DH values (p, g, A) have been embedded into the image '{output_image}' successfully.")
     elif method == '2':
         embed_message_variance(message, input_image, output_image)
-        print(f"✅ DH values (p, g, A) have been embedded into the image '{output_image}' successfully.")
+        print(f" DH values (p, g, A) have been embedded into the image '{output_image}' successfully.")
 
     else:
-        print("❌ Invalid LSB method.")
-
+        print(" Invalid LSB method.")
 
 
 
