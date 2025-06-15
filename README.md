@@ -48,7 +48,7 @@ method.
 The project is executed via the main.py file, which presents an interactive menu with
 options 1–4:
 python main.py
-## Required Inputs:
+### Required Inputs:
 The system requires three image files (preferably in .png or .bmp format) as containers for
 steganographic embedding:
 1. Image for embedding initial DH parameters (p, g, and A – Alice’s public key).
@@ -82,13 +82,13 @@ implemented) and Extracting B from image (to be implemented)
 ├── README.md # This documentation
 ## Dependencies
 This project requires the following libraries and tools:
-● Python 3.x – The runtime environment for executing the code.
-● Pillow – Used for image processing and handling.
+- Python 3.x – The runtime environment for executing the code.
+- Pillow – Used for image processing and handling.
 Install via: pip install Pillow
-● NumPy – For numerical computations and array manipulation.
-● SciPy – Required for implementing variance-based LSB steganography methods.
+- NumPy – For numerical computations and array manipulation.
+- SciPy – Required for implementing variance-based LSB steganography methods.
 Install via: pip install scipy
-● PyCryptodome – A modern cryptographic library used for AES encryption of
+- PyCryptodome – A modern cryptographic library used for AES encryption of
 messages with the shared secret key.
 Install via: pip install pycryptodome
 ## Security Notes
