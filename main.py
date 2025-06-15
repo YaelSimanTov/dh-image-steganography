@@ -50,7 +50,7 @@ if __name__ == "__main__":
             # DH key generation + embedding
             p, g, A, a = generate_dh_values()
             print(f"\n Generated DH values:\np = {p}\ng = {g}\nA = {A}")
-            image = input("Enter path to image to embed DH values: ")
+            image = input("Enter path to image to embed DH values (e.g. horse.png): ")
             if not check_image_file_exists(image): continue
 
             output = input("Enter output image filename (e.g. dh_embedded.png): ")
@@ -60,7 +60,7 @@ if __name__ == "__main__":
             dh_key_generation_and_embedding(p, g, A, image, output, method) # @NEED TO DO !!
 
         elif choice == '2':
-            image = input("Enter path to image with embedded DH values: ")
+            image = input("Enter path to image with embedded DH values (e.g. dh_embedded.png): ")
             if not check_image_file_exists(image): continue
 
             method = load_method_for_image(image)
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             print("\nBob's private key (b):", b)
             B = pow(g, b, p)
             print("Bob's public key (B):", B)
-            image = input("Enter path to image to embed B: ")
+            image = input("Enter path to image to embed B (e.g. dog.png): ")
             if not check_image_file_exists(image): continue
 
             output = input("Enter output image filename (e.g. B_embedded.png): ")
@@ -87,7 +87,7 @@ if __name__ == "__main__":
             print(" Bob's shared secret saved to shared_secret.txt for later comparison.")
 
         elif choice == '3':
-            image_with_B = input("Enter image file that contains B: ")
+            image_with_B = input("Enter image file that contains B (e.g. B_embedded.png): ")
             if not check_image_file_exists(image_with_B): continue
 
             B = int(extract_B_from_image(image_with_B))
@@ -107,8 +107,8 @@ if __name__ == "__main__":
             except FileNotFoundError:
                 print(" Bob's shared secret file not found. Skipping comparison.")
 
-            message = input("Enter the message to encrypt and embed: ")
-            image = input("Enter path to image to embed message: ")
+            message = input("Enter the message to encrypt and embed (e.g. It's a beautiful day. ): ")
+            image = input("Enter path to image to embed message (e.g. deer.png): ")
             if not check_image_file_exists(image): continue
 
             output = input("Enter output image filename (e.g. encrypted_msg.png): ")
@@ -122,7 +122,7 @@ if __name__ == "__main__":
                 with open("shared_secret.txt", "r") as f:
                     S = int(f.read().strip())
 
-                image = input("Enter image file with embedded encrypted message: ")
+                image = input("Enter image file with embedded encrypted message (e.g. encrypted_msg.png): ")
                 if not check_image_file_exists(image) : continue
 
                 # S = int(input("Enter shared secret (S): "))
