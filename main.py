@@ -1,9 +1,9 @@
 import os
-from DH_Key_Exchange_10 import generate_dh_values
-from Embed_DH_Values_Into_Image_11 import dh_key_generation_and_embedding
-from Extract_DH_From_Image_2 import extract_dh_from_image
-from Encrypt_And_Hide_Message_3 import encrypt_and_embed_message
-from Extract_And_Decrypt_Message_4 import extract_and_decrypt_message
+from dh_key_exchange_10 import generate_dh_values
+from embed_dh_values_into_image_11 import dh_key_generation_and_embedding
+from extract_dh_from_image_2 import extract_dh_from_image
+from encrypt_and_hide_message_3 import encrypt_and_embed_message
+from extract_and_decrypt_message_4 import extract_and_decrypt_message
 import random
 from embed_and_extract_B_Into_Image_12 import extract_B_from_image, embed_B_into_image
 def save_method_for_image(image_filename, method):
