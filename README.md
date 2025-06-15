@@ -65,8 +65,8 @@ or provide descriptive filenames for each output.
 You must follow the steps in order:
 Step 1 → Step 2 → Step 3 → Step 4
 Each step depends on the output from the previous one:
-● Skipping or reordering steps will result in incorrect behavior or decryption failures.
-● Shared secrets and public keys are passed between steps via steganographic
+- Skipping or reordering steps will result in incorrect behavior or decryption failures.
+- Shared secrets and public keys are passed between steps via steganographic
 images and intermediate files.
 ## File Structure
 ├── main.py # Main interactive menu
