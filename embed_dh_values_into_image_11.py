@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 import numpy as np
 from scipy.ndimage import generic_filter
-from isb_with_variance_plaintext import embed_message_variance
+from lsb_with_variance_plaintext import embed_message_variance
 END_MARKER = "$t3g0$" #Marker indicating end of message
 
 

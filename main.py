@@ -1,6 +1,6 @@
 import os
 from dh_key_exchange_10 import generate_dh_values
-from embed_dh_values_Into_Image_11 import dh_key_generation_and_embedding, extract_B_from_image, embed_B_into_image
+from embed_dh_values_into_image_11 import dh_key_generation_and_embedding, extract_B_from_image, embed_B_into_image
 from extract_dh_from_image_2 import extract_dh_from_image
 from encrypt_and_hide_message_3 import encrypt_and_embed_message
 from extract_and_decrypt_message_4 import extract_and_decrypt_message

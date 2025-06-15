@@ -3,7 +3,7 @@ from Crypto.Util.Padding import unpad
 from hashlib import sha256
 from PIL import Image
 import numpy as np
-from isb_with_variance_aes import extract_message_variance
+from lsb_with_variance_aes import extract_message_variance
 END_MARKER = "$t3g0$"
 
 def derive_aes_key(shared_secret):

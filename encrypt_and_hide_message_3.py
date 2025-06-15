@@ -4,7 +4,7 @@ from hashlib import sha256
 from PIL import Image
 import numpy as np
 from scipy.ndimage import generic_filter
-from isb_with_variance_aes import embed_message_variance
+from lsb_with_variance_aes import embed_message_variance
 
 END_MARKER = "$t3g0$"
 

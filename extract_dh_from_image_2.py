@@ -2,7 +2,7 @@ from PIL import Image
 import numpy as np
 from scipy.ndimage import generic_filter
 END_MARKER = "$t3g0$"
-from isb_with_variance_plaintext import extract_message_variance
+from lsb_with_variance_plaintext import extract_message_variance
 
 
 def extract_dh_from_image_standard_lsb(image_path):
