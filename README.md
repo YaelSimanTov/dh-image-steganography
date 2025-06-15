@@ -73,8 +73,8 @@ images and intermediate files.
 ├── main.py # Main interactive menu<br>
 ├── dh_key_exchange_10.py # Diffie-Hellman parameter generation<br>
 ├── embed_dh_values_into_image_11.py # Embedding p, g, A into image<br>
-├── embed_and_extract_B_into_image_12.py # Embedding B into image (to be
-implemented) and Extracting B from image (to be implemented)
+├── embed_and_extract_B_into_image_12.py # Embedding B into image (to be<br>
+implemented) and Extracting B from image (to be implemented)<br>
 ├── extract_dh_from_image_2.py # Extracting p, g, A from image<br>
 ├── encrypt_and_hide_message_3.py # Encrypt and embed message<br>
 ├── extract_and_decrypt_message_4.py # Extract and decrypt message<br>
@@ -87,7 +87,7 @@ This project requires the following libraries and tools:
 - **Pillow** – Used for image processing and handling.
 Install via: pip install Pillow
 - **NumPy** – For numerical computations and array manipulation.
-- SciPy – Required for implementing variance-based LSB steganography methods.
+- **SciPy** – Required for implementing variance-based LSB steganography methods.
 Install via: pip install scipy
 - **PyCryptodome** – A modern cryptographic library used for AES encryption of
 messages with the shared secret key.
