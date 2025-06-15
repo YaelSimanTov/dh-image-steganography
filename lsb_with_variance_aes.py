@@ -15,6 +15,16 @@ def get_aes_key(password):
 
 
 def encrypt_message(message, password):
+    """
+       Encrypts a message using AES (ECB mode) and returns it as a hex string.
+
+       Parameters:
+           message (str): The plaintext to encrypt.
+           password (str): Password used to derive the AES key.
+
+       Returns:
+           str: Encrypted message as hex.
+       """
     key = get_aes_key(password)
     cipher = AES.new(key, AES.MODE_ECB)
     ciphertext = cipher.encrypt(pad(message.encode(), AES.block_size))
@@ -22,6 +32,16 @@ def encrypt_message(message, password):
 
 
 def decrypt_message(hex_ciphertext, password):
+    """
+     Decrypts a hex-encoded AES (ECB) message using the given password.
+
+     Parameters:
+         hex_ciphertext (str): The encrypted message in hex.
+         password (str): Password to derive the AES key.
+
+     Returns:
+         str: Decrypted plaintext message.
+     """
     key = get_aes_key(password)
     cipher = AES.new(key, AES.MODE_ECB)
     ciphertext = bytes.fromhex(hex_ciphertext)
@@ -34,27 +54,17 @@ def local_variance(block):
 
 def embed_message_variance(message, input_image, output_image ,sign):
     """
-        Embeds an encrypted message into an image using adaptive LSB steganography
-        based on local variance mapping.
+       Encrypts and embeds a message into an image using variance-based LSB steganography.
 
-        The image is divided into 3x3 blocks, and for each block, the local variance
-        is calculated to determine which LSB pair to use for embedding. This allows
-        data to be hidden in noisier (higher-variance) areas, making it less detectable.
+       Parameters:
+           message (str): Message to encrypt and embed.
+           input_image (str): Path to the source image (RGB).
+           output_image (str): Path to save the output image.
+           sign (int): Shared secret for AES encryption.
 
-        Parameters:
-            message (str): The plaintext message to encrypt and embed.
-            input_image (str): Path to the original input image (must be RGB).
-            output_image (str): Path to save the output image with the embedded message.
-            sign (int): A shared secret used for encrypting the message via AES.
-
-        Returns:
-            None. Saves the image with the embedded message to the specified output path.
-
-        Notes:
-            - The message is encrypted using AES and marked with a global END_MARKER.
-            - A header is embedded containing min/max variance and encrypted length.
-            - Uses a 2-bit LSB embedding scheme with 6 variance-based bins.
-        """
+       Returns:
+           None. Saves the image with the embedded message.
+       """
     img = Image.open(input_image).convert("RGB")
     array = np.array(img)
     gray = img.convert("L")

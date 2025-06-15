@@ -56,6 +56,20 @@ def embed_with_standard_lsb_without_AES(image_path, message, output_path):
 
 
 def dh_key_generation_and_embedding(p, g, A, input_image, output_image, method):
+    """
+       Embeds Diffie-Hellman values (p, g, A) into an image using the selected LSB method.
+
+       Parameters:
+           p (int): Prime number.
+           g (int): Generator.
+           A (int): Public key.
+           input_image (str): Path to input image.
+           output_image (str): Path to save output image.
+           method (str): '1' for standard LSB, '2' for variance-based.
+
+       Returns:
+           None. Saves the image with embedded DH values.
+       """
     message = create_dh_message(p, g, A)
     if method == '1':
         embed_with_standard_lsb_without_AES(input_image, message, output_image)

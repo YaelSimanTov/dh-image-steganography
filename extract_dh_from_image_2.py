@@ -53,6 +53,27 @@ def parse_dh_values(message):
         return None, None, None
 
 def extract_dh_from_image(image, method):
+    """
+        Extracts Diffie-Hellman parameters (p, g, A) from an image using the selected steganographic extraction method.
+
+        Depending on the specified method, the function uses either:
+        - Standard LSB extraction (method '1')
+        - Variance-based adaptive LSB extraction (method '2')
+
+        Parameters:
+            image (str): Path to the image containing the embedded Diffie-Hellman values.
+            method (str): Extraction method to use:
+                          - '1' for standard LSB
+                          - '2' for variance-based adaptive LSB
+
+        Returns:
+            tuple: A tuple (p, g, A) containing the extracted prime number, primitive root, and public key as integers.
+
+        Notes:
+            - Requires the presence of a global END_MARKER in the embedded message.
+            - The message must be in the format: "<p>:<g>:<A>"
+            - Depends on: extract_dh_from_image_standard_lsb(), extract_message_variance(), parse_dh_values().
+        """
     if method == '1':
         message = extract_dh_from_image_standard_lsb(image)
     elif method == '2':
